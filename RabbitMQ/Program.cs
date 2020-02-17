@@ -108,6 +108,11 @@ namespace RabbitMQ
                     var message = Encoding.UTF8.GetString(body);
                     Console.WriteLine($" [x] otrzymano {message}");
                 };
+
+                // accept only one unack-ed message at a time
+                // uint prefetchSize, ushort prefetchCount, bool global
+                channel.BasicQos(0, 1, false);
+
                 channel.BasicConsume(
                     queue: "queue1",
                     autoAck: true,
