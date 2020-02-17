@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -17,20 +18,13 @@ namespace RabbitMQ
 
         static void Main(string[] args)
         {
-            //Publish();
-            //Console.WriteLine(GetMessage());
-            //Console.WriteLine("Press ESC to stop");
-            Receiver();
-            do
+            //SubscribeToQueue();
+            while (true)
             {
-                while (!Console.KeyAvailable)
-                {
-                    // Do something
-                    Publish();
-                    Thread.Sleep(100);
-                }
-            } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
-
+                Receiver();
+                Publish();
+                Thread.Sleep(5000);
+            }
         }
 
         public static void SubscribeToQueue()
@@ -38,15 +32,10 @@ namespace RabbitMQ
             using (var conn = connFactory.CreateConnection())
             using (var channel = conn.CreateModel())
             {
-                QueueingBasicConsumer consumer = new QueueingBasicConsumer(channel);
-                String consumerTag = channel.BasicConsume("queue1", false, consumer);
-                Client.Events.BasicDeliverEventArgs e = (Client.Events.BasicDeliverEventArgs)consumer.Queue.Dequeue();
-                IBasicProperties props = e.BasicProperties;
-                byte[] body = e.Body;
-                channel.BasicAck(e.DeliveryTag, false);
-            }
-
-            
+                channel.BasicQos(0, 1, false);
+                MessageReceiver messageReceiver = new MessageReceiver(channel);
+                channel.BasicConsume("queue1", false, messageReceiver);
+            }      
         }
 
         public static void Publish()
