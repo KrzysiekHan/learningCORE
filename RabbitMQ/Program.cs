@@ -111,6 +111,34 @@ namespace RabbitMQ
                 Console.ReadLine();
             }
         }
+
+        public static void CreateTestExchanges()
+        {
+            using (var conn = connFactory.CreateConnection() )
+            using (var channel = conn.CreateModel())
+            {
+                channel.ExchangeDeclare("DirectExchangeTest", ExchangeType.Direct);
+                channel.QueueDeclare("QueueForDirect_01");
+                channel.QueueDeclare("QueueForDirect_02");
+                channel.QueueDeclare("QueueForDirect_03");
+                channel.QueueBind("QueueForDirect_01", "DirectExchangeTest","RoutingKeyQueue1");
+
+                channel.ExchangeDeclare("FanoutExchangeTest", ExchangeType.Fanout);
+                channel.QueueDeclare("QueueForFanout_01");
+                channel.QueueDeclare("QueueForFanout_02");
+                channel.QueueDeclare("QueueForFanout_03");
+
+                channel.ExchangeDeclare("TopicExchangeTest", ExchangeType.Topic);
+                channel.QueueDeclare("QueueForTopic_01");
+                channel.QueueDeclare("QueueForTopic_02");
+                channel.QueueDeclare("QueueForTopic_03");
+
+                channel.ExchangeDeclare("HeadersExchangeTest", ExchangeType.Headers);
+                channel.QueueDeclare("QueueForHeaders_01");
+                channel.QueueDeclare("QueueForHeaders_02");
+                channel.QueueDeclare("QueueForHeaders_03");
+            }
+        }
     }
 
 
