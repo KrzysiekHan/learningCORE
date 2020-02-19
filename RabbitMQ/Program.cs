@@ -18,11 +18,37 @@ namespace RabbitMQ
 
         static void Main(string[] args)
         {
+
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("Lista operacji : ");
+                Console.WriteLine("1 - Opublikuj wiadomość w kolejce queue1");
+                Console.WriteLine("2 - Odczytaj wiadomość z kolejki queue1");
+                Console.WriteLine("Podaj cyfrę i potwierdź enterem:");
+                string option = Console.ReadLine();
+                switch (option)
+                {
+                    case "1":
+                        Publish();
+                        break;
+                    case "2":
+                        break;
+                    case "3":
+                        break;
+                    case "4":
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            
             //SubscribeToQueue();
             while (true)
             {
                 Receiver();
-                Publish();
+                
                 Thread.Sleep(5000);
             }
         }
@@ -122,16 +148,24 @@ namespace RabbitMQ
                 channel.QueueDeclare("QueueForDirect_02");
                 channel.QueueDeclare("QueueForDirect_03");
                 channel.QueueBind("QueueForDirect_01", "DirectExchangeTest","RoutingKeyQueue1");
+                channel.QueueBind("QueueForDirect_02", "DirectExchangeTest", "RoutingKeyQueue2");
+                channel.QueueBind("QueueForDirect_03", "DirectExchangeTest", "RoutingKeyQueue2");
 
                 channel.ExchangeDeclare("FanoutExchangeTest", ExchangeType.Fanout);
                 channel.QueueDeclare("QueueForFanout_01");
                 channel.QueueDeclare("QueueForFanout_02");
                 channel.QueueDeclare("QueueForFanout_03");
+                channel.QueueBind("QueueForFanout_01", "FanoutExchangeTest", "1");
+                channel.QueueBind("QueueForFanout_02", "FanoutExchangeTest", "2");
+                channel.QueueBind("QueueForFanout_03", "FanoutExchangeTest", "3");
 
                 channel.ExchangeDeclare("TopicExchangeTest", ExchangeType.Topic);
-                channel.QueueDeclare("QueueForTopic_01");
-                channel.QueueDeclare("QueueForTopic_02");
-                channel.QueueDeclare("QueueForTopic_03");
+                channel.QueueDeclare("Topic.QueueForTopic_01");
+                channel.QueueDeclare("Topic.QueueForTopic_02");
+                channel.QueueDeclare("Topic.QueueForTopic_03");
+                channel.QueueBind("Topic.QueueForTopic_01", "TopicExchangeTest", "1");
+                channel.QueueBind("Topic.QueueForTopic_02", "TopicExchangeTest", "2");
+                channel.QueueBind("Topic.QueueForTopic_03", "TopicExchangeTest", "3");
 
                 channel.ExchangeDeclare("HeadersExchangeTest", ExchangeType.Headers);
                 channel.QueueDeclare("QueueForHeaders_01");
