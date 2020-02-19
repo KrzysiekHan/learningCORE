@@ -138,6 +138,20 @@ namespace RabbitMQ
             }
         }
 
+        public void SendMessageTopic()
+        {
+            using (var conn = connFactory.CreateConnection())
+            using (var channel = conn.CreateModel())
+            {
+                var properties = channel.CreateBasicProperties();
+                properties.Persistent = false;
+                byte[] messagebuffer = Encoding.Default.GetBytes("Message from Topic Exchange 'Bombay' ");//to change
+                channel.BasicPublish("TopicExchangeTest", "Message.Bombay.Email", properties, messagebuffer);//to change
+                Console.WriteLine("Message Sent From :- topic.exchange ");//to change
+                Console.WriteLine("Routing Key :- Message.Bombay.Email");//to change
+                Console.WriteLine("Message Sent");//to change
+            }
+        }
         public static void CreateTestExchanges()
         {
             using (var conn = connFactory.CreateConnection() )
@@ -160,17 +174,20 @@ namespace RabbitMQ
                 channel.QueueBind("QueueForFanout_03", "FanoutExchangeTest", "3");
 
                 channel.ExchangeDeclare("TopicExchangeTest", ExchangeType.Topic);
-                channel.QueueDeclare("Topic.QueueForTopic_01");
-                channel.QueueDeclare("Topic.QueueForTopic_02");
+                channel.QueueDeclare("Topic.QueueForTopic_01.1");
+                channel.QueueDeclare("Topic.QueueForTopic_02.2");
                 channel.QueueDeclare("Topic.QueueForTopic_03");
-                channel.QueueBind("Topic.QueueForTopic_01", "TopicExchangeTest", "1");
-                channel.QueueBind("Topic.QueueForTopic_02", "TopicExchangeTest", "2");
-                channel.QueueBind("Topic.QueueForTopic_03", "TopicExchangeTest", "3");
+                channel.QueueBind("Topic.*.1", "TopicExchangeTest", "1");
+                channel.QueueBind("Topic.*.2", "TopicExchangeTest", "2");
+                channel.QueueBind("Topic.#", "TopicExchangeTest", "3");
 
                 channel.ExchangeDeclare("HeadersExchangeTest", ExchangeType.Headers);
                 channel.QueueDeclare("QueueForHeaders_01");
                 channel.QueueDeclare("QueueForHeaders_02");
                 channel.QueueDeclare("QueueForHeaders_03");
+                channel.QueueBind("QueueForHeaders_01", "HeadersExchangeTest", "1");
+                channel.QueueBind("QueueForHeaders_02", "HeadersExchangeTest", "2");
+                channel.QueueBind("QueueForHeaders_03", "HeadersExchangeTest", "3");
             }
         }
     }
