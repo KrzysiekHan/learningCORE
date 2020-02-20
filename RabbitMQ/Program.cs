@@ -42,15 +42,6 @@ namespace RabbitMQ
                         break;
                 }
             }
-
-            
-            //SubscribeToQueue();
-            while (true)
-            {
-                Receiver();
-                
-                Thread.Sleep(5000);
-            }
         }
 
         public static void SubscribeToQueue()
@@ -145,7 +136,7 @@ namespace RabbitMQ
             {
                 var properties = channel.CreateBasicProperties();
                 properties.Persistent = false;
-                byte[] messagebuffer = Encoding.Default.GetBytes("Message from Topic Exchange 'Bombay' ");//to change
+                byte[] messagebuffer = Encoding.Default.GetBytes("Message from Topic Exchange 'TopicExchangeTest' ");//to change
                 channel.BasicPublish("TopicExchangeTest", "Message.Bombay.Email", properties, messagebuffer);//to change
                 Console.WriteLine("Message Sent From :- topic.exchange ");//to change
                 Console.WriteLine("Routing Key :- Message.Bombay.Email");//to change
