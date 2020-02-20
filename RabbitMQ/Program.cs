@@ -174,12 +174,12 @@ namespace RabbitMQ
                 channel.QueueBind("QueueForFanout_03", "FanoutExchangeTest", "3");
 
                 channel.ExchangeDeclare("TopicExchangeTest", ExchangeType.Topic);
-                channel.QueueDeclare("Topic.QueueForTopic_01.1");
-                channel.QueueDeclare("Topic.QueueForTopic_02.2");
+                channel.QueueDeclare("Topic.QueueForTopic_01");
+                channel.QueueDeclare("Topic.QueueForTopic_02");
                 channel.QueueDeclare("Topic.QueueForTopic_03");
-                channel.QueueBind("Topic.*.1", "TopicExchangeTest", "1");
-                channel.QueueBind("Topic.*.2", "TopicExchangeTest", "2");
-                channel.QueueBind("Topic.#", "TopicExchangeTest", "3");
+                channel.QueueBind("Topic.QueueForTopic_01", "TopicExchangeTest", "Topic.QueueForTopic_01.1");
+                channel.QueueBind("Topic.QueueForTopic_02", "TopicExchangeTest", "Topic.#"); //all messages with topic. routing key
+                channel.QueueBind("Topic.QueueForTopic_03", "TopicExchangeTest", "Topic.*.1");
 
                 channel.ExchangeDeclare("HeadersExchangeTest", ExchangeType.Headers);
                 channel.QueueDeclare("QueueForHeaders_01");
