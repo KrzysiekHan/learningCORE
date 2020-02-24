@@ -13,7 +13,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopicExchange", "TopicExcha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RawRabbit_FirstTests", "RawRabbit_FirstTests\RawRabbit_FirstTests.csproj", "{41BE31FF-C9DE-4885-9C2B-5012622348FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WEBAPI CORE", "WEBAPI CORE\WEBAPI CORE.csproj", "{3C9D6D3A-0717-4E33-B5B8-C54A65ECFA04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WEBAPI CORE", "WEBAPI CORE\WEBAPI CORE.csproj", "{3C9D6D3A-0717-4E33-B5B8-C54A65ECFA04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI2", "WebAPI2\WebAPI2.csproj", "{00BBE8A0-C316-483B-B812-348A3AA918EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{3C9D6D3A-0717-4E33-B5B8-C54A65ECFA04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C9D6D3A-0717-4E33-B5B8-C54A65ECFA04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C9D6D3A-0717-4E33-B5B8-C54A65ECFA04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00BBE8A0-C316-483B-B812-348A3AA918EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00BBE8A0-C316-483B-B812-348A3AA918EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00BBE8A0-C316-483B-B812-348A3AA918EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00BBE8A0-C316-483B-B812-348A3AA918EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
