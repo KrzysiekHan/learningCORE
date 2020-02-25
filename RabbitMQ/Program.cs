@@ -117,6 +117,38 @@ namespace RabbitMQ
                 Console.ReadLine();
             }
         }
+
+        public static void SendCustomMessage(string messsage, string queueName)
+        {
+
+            // otwarcie połączenia
+            using (var connection = connFactory.CreateConnection())
+            {
+                // utworzenie kanału komunikacji
+                using (var channel = connection.CreateModel())
+                {
+                    channel.QueueDeclare(queue: queueName,
+                    durable: false,
+                    exclusive: false,
+                    autoDelete: false,
+                    arguments: null);
+
+                    do
+                    {
+                        var msgBody = Encoding.UTF8.GetBytes(messsage);
+                        channel.BasicPublish(exchange: "",
+                        routingKey: "msgKey",
+                        basicProperties: null,
+                        body: msgBody);
+
+                        Console.WriteLine($" [x] wysłano {msgBody}");
+
+                    } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
+                }
+            }
+            Console.WriteLine("Wciśnij [Enter], aby wyłączyć aplikację");
+            Console.ReadLine();
+        }
     }
 
 
