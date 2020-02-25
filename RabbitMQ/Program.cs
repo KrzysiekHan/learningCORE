@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -17,20 +18,30 @@ namespace RabbitMQ
 
         static void Main(string[] args)
         {
-            //Publish();
-            //Console.WriteLine(GetMessage());
-            //Console.WriteLine("Press ESC to stop");
-            Receiver();
-            do
-            {
-                while (!Console.KeyAvailable)
-                {
-                    // Do something
-                    Publish();
-                    Thread.Sleep(100);
-                }
-            } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
 
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("Lista operacji : ");
+                Console.WriteLine("1 - Opublikuj wiadomość w kolejce queue1");
+                Console.WriteLine("2 - Odczytaj wiadomość z kolejki queue1");
+                Console.WriteLine("Podaj cyfrę i potwierdź enterem:");
+                string option = Console.ReadLine();
+                switch (option)
+                {
+                    case "1":
+                        Publish();
+                        break;
+                    case "2":
+                        break;
+                    case "3":
+                        break;
+                    case "4":
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         public static void SubscribeToQueue()
@@ -38,15 +49,10 @@ namespace RabbitMQ
             using (var conn = connFactory.CreateConnection())
             using (var channel = conn.CreateModel())
             {
-                QueueingBasicConsumer consumer = new QueueingBasicConsumer(channel);
-                String consumerTag = channel.BasicConsume("queue1", false, consumer);
-                Client.Events.BasicDeliverEventArgs e = (Client.Events.BasicDeliverEventArgs)consumer.Queue.Dequeue();
-                IBasicProperties props = e.BasicProperties;
-                byte[] body = e.Body;
-                channel.BasicAck(e.DeliveryTag, false);
-            }
-
-            
+                channel.BasicQos(0, 1, false);
+                MessageReceiver messageReceiver = new MessageReceiver(channel);
+                channel.BasicConsume("queue1", false, messageReceiver);
+            }      
         }
 
         public static void Publish()
@@ -108,6 +114,11 @@ namespace RabbitMQ
                     var message = Encoding.UTF8.GetString(body);
                     Console.WriteLine($" [x] otrzymano {message}");
                 };
+
+                // accept only one unack-ed message at a time
+                // uint prefetchSize, ushort prefetchCount, bool global
+                channel.BasicQos(0, 1, false);
+
                 channel.BasicConsume(
                     queue: "queue1",
                     autoAck: true,
@@ -115,6 +126,59 @@ namespace RabbitMQ
                     );
                 Console.WriteLine("Wciśnij enter aby wyłączyć aplikację");
                 Console.ReadLine();
+            }
+        }
+
+        public void SendMessageTopic()
+        {
+            using (var conn = connFactory.CreateConnection())
+            using (var channel = conn.CreateModel())
+            {
+                var properties = channel.CreateBasicProperties();
+                properties.Persistent = false;
+                byte[] messagebuffer = Encoding.Default.GetBytes("Message from Topic Exchange 'TopicExchangeTest' ");//to change
+                channel.BasicPublish("TopicExchangeTest", "Message.Bombay.Email", properties, messagebuffer);//to change
+                Console.WriteLine("Message Sent From :- topic.exchange ");//to change
+                Console.WriteLine("Routing Key :- Message.Bombay.Email");//to change
+                Console.WriteLine("Message Sent");//to change
+            }
+        }
+        public static void CreateTestExchanges()
+        {
+            using (var conn = connFactory.CreateConnection() )
+            using (var channel = conn.CreateModel())
+            {
+                channel.ExchangeDeclare("DirectExchangeTest", ExchangeType.Direct);
+                channel.QueueDeclare("QueueForDirect_01");
+                channel.QueueDeclare("QueueForDirect_02");
+                channel.QueueDeclare("QueueForDirect_03");
+                channel.QueueBind("QueueForDirect_01", "DirectExchangeTest","RoutingKeyQueue1");
+                channel.QueueBind("QueueForDirect_02", "DirectExchangeTest", "RoutingKeyQueue2");
+                channel.QueueBind("QueueForDirect_03", "DirectExchangeTest", "RoutingKeyQueue2");
+
+                channel.ExchangeDeclare("FanoutExchangeTest", ExchangeType.Fanout);
+                channel.QueueDeclare("QueueForFanout_01");
+                channel.QueueDeclare("QueueForFanout_02");
+                channel.QueueDeclare("QueueForFanout_03");
+                channel.QueueBind("QueueForFanout_01", "FanoutExchangeTest", "1");
+                channel.QueueBind("QueueForFanout_02", "FanoutExchangeTest", "2");
+                channel.QueueBind("QueueForFanout_03", "FanoutExchangeTest", "3");
+
+                channel.ExchangeDeclare("TopicExchangeTest", ExchangeType.Topic);
+                channel.QueueDeclare("Topic.QueueForTopic_01");
+                channel.QueueDeclare("Topic.QueueForTopic_02");
+                channel.QueueDeclare("Topic.QueueForTopic_03");
+                channel.QueueBind("Topic.QueueForTopic_01", "TopicExchangeTest", "Topic.QueueForTopic_01.1");
+                channel.QueueBind("Topic.QueueForTopic_02", "TopicExchangeTest", "Topic.#"); //all messages with topic. routing key
+                channel.QueueBind("Topic.QueueForTopic_03", "TopicExchangeTest", "Topic.*.1");
+
+                channel.ExchangeDeclare("HeadersExchangeTest", ExchangeType.Headers);
+                channel.QueueDeclare("QueueForHeaders_01");
+                channel.QueueDeclare("QueueForHeaders_02");
+                channel.QueueDeclare("QueueForHeaders_03");
+                channel.QueueBind("QueueForHeaders_01", "HeadersExchangeTest", "1");
+                channel.QueueBind("QueueForHeaders_02", "HeadersExchangeTest", "2");
+                channel.QueueBind("QueueForHeaders_03", "HeadersExchangeTest", "3");
             }
         }
 
