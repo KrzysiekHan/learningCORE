@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Http;
 
 namespace PingYourPackage.API.Config
 {
-    class WebAPIConfig
+    public class WebAPIConfig
     {
+        public static void Configure(HttpConfiguration config)
+        {
+        }
     }
 }
