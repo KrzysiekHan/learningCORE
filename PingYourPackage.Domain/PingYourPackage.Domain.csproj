@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\Affiliate.cs" />
+    <Compile Include="Entities\Core\EntitiesContext.cs" />
     <Compile Include="Entities\Core\IEntity.cs" />
     <Compile Include="Entities\Role.cs" />
     <Compile Include="Entities\Shipment.cs" />
